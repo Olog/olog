@@ -1,0 +1,47 @@
+<!--
+#%L
+Olog Directory Service
+%%
+This software is Copyright by the Board of Trustees of Michigan State University (c) Copyright 2005.
+%%
+Copyright (C) 2010 - 2012 Brookhaven National Laboratory
+All rights reserved. Use is subject to license terms.
+#L%
+-->
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+    <id>dist</id>
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+    <moduleSets>
+    <moduleSet>
+      <useAllReactorProjects>true</useAllReactorProjects>
+      <includes>
+        <include>edu.msu.nscl.olog:olog-service</include>
+        <include>edu.msu.nscl.olog:olog-java-api</include>
+      </includes>
+      <binaries>
+        <outputDirectory>modules/${artifactId}</outputDirectory>
+        <unpack>false</unpack>
+      </binaries>
+    </moduleSet>
+  </moduleSets>
+    <fileSets>
+        <fileSet>
+            <directory>sql</directory>
+            <includes>
+                <include>*</include>
+            </includes>
+            <outputDirectory>sql</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>ldif</directory>
+            <includes>
+                <include>*</include>
+            </includes>
+            <outputDirectory>ldif</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>

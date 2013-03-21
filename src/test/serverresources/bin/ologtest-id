@@ -1,0 +1,25 @@
+#!/bin/sh
+
+case $1 in
+tag)
+    echo "uid=23001(tag) gid=23001(tag) groups=23001(tag),24001(olog-ttags),24004(olog-xxxx),24005(olog-testx),24006(olog-tags)"
+    ;;
+property)
+    echo "uid=23002(property) gid=23002(property) groups=23002(property),24001(olog-ttags),24002(olog-tproperties),24004(olog-xxxx),24005(olog-testx),24007(olog-properties)"
+    ;;
+logbook)
+    echo "uid=23003(logbook) gid=23003(logbook) groups=23003(logbook),24001(olog-ttags),24002(olog-tproperties),24003(olog-tlogbooks),24004(olog-xxxx),24005(olog-testx),24008(olog-logbooks)"
+    ;;
+admin)
+    echo "uid=23004(admin) gid=23004(admin) groups=23004(admin),24009(olog-admins)"
+    ;;
+property2)
+    echo "uid=23005(property2) gid=23005(property2) groups=23005(property2),24001(olog-ttags),24007(olog-properties)"
+    ;;
+logbook2)
+    echo "uid=23006(logbook2) gid=23006(logbook2) groups=23006(logbook2),24002(olog-tproperties),24003(olog-tlogbooks),24008(olog-logbooks)"
+    ;;
+*)
+    echo "id: $1: No such user"
+esac
+

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Olog">
+  <body>
+    <menu name="Olog">
+      <item name="index" href="index.html"/>
+    </menu>
+  </body>
+  <poweredBy>
+    <logo name="Cloudbees" href="https://openepics.ci.cloudbees.com/"
+          img="http://web-static-cloudfront.s3.amazonaws.com/images/badges/BuiltOnDEV.png"/>
+    <logo name="Maven" href="http://maven.apache.org/"
+          img="http://maven.apache.org/images/logos/maven-feather.png"/>
+  </poweredBy>    
+</project>
+
