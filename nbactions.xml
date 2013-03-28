@@ -22,6 +22,14 @@
         </goals>
     </action>
     <action>
+        <actionName>CUSTOM-Package</actionName>
+        <displayName>Package</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>package</goal>
+        </goals>
+    </action>
+    <action>
         <actionName>build</actionName>
         <goals>
             <goal>install</goal>

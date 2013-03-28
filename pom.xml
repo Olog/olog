@@ -5,13 +5,11 @@
     <artifactId>olog</artifactId>
     <version>2.2.3-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Olog</name>
+    <name>olog.github.com</name>
     <description>Olog is a directory server, implemented as a REST style web service.</description>
-    <url>http://olog.sourceforge.net/</url>
+    <url>http://olog.github.com/</url>
     <organization>
-        <name>
-            Michigan State University
-        </name>
+        <name>Michigan State University</name>
     </organization>
     <inceptionYear>2010</inceptionYear>
     <licenses>
@@ -21,6 +19,7 @@
         </license>
     </licenses>
     <properties>
+        <github.global.server>github</github.global.server>
         <eclipselink.version>2.4.0</eclipselink.version>
         <glassfish.version>3.1.2.2</glassfish.version>
         <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
@@ -53,9 +52,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:file://C:/testPom/pyOlog</connection>
-        <developerConnection>scm:git:file://C:/testPom/pyOlog</developerConnection>
-        <url>https://github.com/Olog/</url>
+        <connection>scm:git:https://github.com/Olog/olog.github.com.git</connection>
+        <developerConnection>scm:git:https://github.com/Olog/olog.github.com.git</developerConnection>
+        <url>https://github.com/Olog/olog.github.com</url>
     </scm>
     <issueManagement>
         <system>jira</system>
@@ -95,11 +94,46 @@
         <module>modules/olog-java-api</module>
         <module>modules/olog-service/olog</module>
         <module>modules/pyOlog</module>
-        <module>distribuition</module>
     </modules>
+    <dependencies>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>6.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.glassfish.v3</groupId>
+            <artifactId>jersey-gfv3-core</artifactId>
+            <version>1.13</version>
+            <scope>provided</scope>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.21</version>
+        </dependency>
+    </dependencies>
+    <distributionManagement>
+        <site>
+            <id>github-pages-site</id>
+            <name>Deployment through GitHub's site deployment plugin</name>
+            <url>site/${project.version}</url>
+        </site>
+    </distributionManagement>
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.4</version>
+                    <configuration>
+                        <descriptors>
+                            <descriptor>src/assemble/bin.xml</descriptor>
+                        </descriptors>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-scm-plugin</artifactId>
@@ -108,6 +142,35 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.7</version>
+                <configuration>
+                    <message>Creating site for ${project.artifactId}, ${project.version}</message>
+                    <!-- this does the trick to place every module in the correct subfolder -->
+                    <path>${project.distributionManagement.site.url}</path>
+                    <branch>master</branch>
+                    <merge>false</merge>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>github-site</id>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>site-deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
@@ -122,33 +185,10 @@
                 <artifactId>maven-scm-plugin</artifactId>
                 <version>1.8.1</version>
             </plugin>
-            <plugin> 
-                <artifactId>maven-deploy-plugin</artifactId> 
-                <version>2.7</version> 
-                <dependencies> 
-                    <dependency> 
-                        <groupId>org.apache.maven.wagon</groupId> 
-                        <artifactId>wagon-ssh</artifactId> 
-                        <version>2.2</version> 
-                    </dependency> 
-                </dependencies> 
-            </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/main/assembly/distribution.xml</descriptor>
-                    </descriptors>
-                </configuration>
                 <executions>
-                    <execution>
-                        <id>distribution</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
                     <execution>
                         <id>cargo-config-filtering</id>
                         <phase>process-test-resources</phase>
@@ -194,15 +234,29 @@
                                 <artifactId>mysql-connector-java</artifactId>
                             </dependency>
                         </dependencies>
+                        <output>${project.build.directory}/container.log</output>
+                        <append>false</append>
+                        <log>${project.build.directory}/cargo.log</log>
                     </container>
                     <configuration>
                         <configfiles>
                             <configfile>
-                                <file>${project.build.directory}/olog-service-cargo-inject/config</file>
+                                <file>${project.build.directory}/$${project.artifactId}-${project.version}-cargo-inject/config</file>
                                 <todir>cargo-domain/config</todir>
                             </configfile>
                         </configfiles>
                     </configuration>
+                    <deployables>
+                        <deployable>
+                            <groupId>edu.msu.nscl.olog</groupId>
+                            <artifactId>olog-service</artifactId>
+                            <type>war</type>
+                            <properties>
+                                <context>/Olog</context>
+                            </properties>
+                            <location>modules/olog-service/olog/target/olog-service.war</location>
+                        </deployable>
+                    </deployables>
                 </configuration>
                 <executions>
                     <execution>
@@ -235,12 +289,11 @@
                 </executions>
                 <configuration>
                     <executable>nosetests</executable>
-                    <workingDirectory>../test</workingDirectory>
+                    <workingDirectory>modules\pyOlog\pyOlog\test</workingDirectory>
                     <arguments>
                         <argument>-v</argument>
-                        <argument>-s</argument>
-                        <argument>--with-xunit</argument>
-                        <argument>--xunit-file=${project.build.directory}/failsafe-reports/nosetests.xml</argument>
+                        <argument>OlogClientTest.py</argument>
+                        <argument>OlogDataTypeTest.py</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -248,23 +301,6 @@
     </build>
     <reporting>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-changes-plugin</artifactId>
-                <version>2.7.1</version>
-                <configuration>
-                    <columnNames>Fix Version,Priority,Type,Summary,Assignee,Key,Status,Resolution</columnNames>
-                    <sortColumnNames>Fix Version,Priority,Key DESC</sortColumnNames>
-                    <component>Service</component>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>jira-report</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
