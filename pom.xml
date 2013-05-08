@@ -5,7 +5,7 @@
     <artifactId>olog</artifactId>
     <version>2.2.3-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>olog.github.com</name>
+    <name>Olog</name>
     <description>Olog is a directory server, implemented as a REST style web service.</description>
     <url>http://olog.github.com/</url>
     <organization>
@@ -19,6 +19,11 @@
         </license>
     </licenses>
     <properties>
+        <!-- Only integration tests are run. -->
+        <skip.integration.tests>false</skip.integration.tests>
+        <skip.unit.tests>false</skip.unit.tests>
+        <maven-failsafe-plugin.version>2.14.1</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>2.14.1</maven-surefire-plugin.version>
         <github.global.server>github</github.global.server>
         <eclipselink.version>2.4.0</eclipselink.version>
         <glassfish.version>3.1.2.2</glassfish.version>
@@ -52,9 +57,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/Olog/olog.github.com.git</connection>
-        <developerConnection>scm:git:https://github.com/Olog/olog.github.com.git</developerConnection>
-        <url>https://github.com/Olog/olog.github.com</url>
+        <connection>scm:git:https://github.com/Olog/olog.git</connection>
+        <developerConnection>scm:git:https://github.com/Olog/olog.git</developerConnection>
+        <url>https://github.com/Olog/olog</url>
     </scm>
     <issueManagement>
         <system>jira</system>
@@ -91,29 +96,12 @@
         </mailingList>
     </mailingLists>
     <modules>
-        <module>modules/olog-java-api</module>
         <module>modules/olog-service/olog</module>
+        <module>modules/olog-java-api</module>
         <module>modules/pyOlog</module>
+        <module>modules/integration</module>
     </modules>
     <dependencies>
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>6.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey.glassfish.v3</groupId>
-            <artifactId>jersey-gfv3-core</artifactId>
-            <version>1.13</version>
-            <scope>provided</scope>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.21</version>
-        </dependency>
     </dependencies>
     <distributionManagement>
         <site>
@@ -139,6 +127,24 @@
                     <artifactId>maven-scm-plugin</artifactId>
                     <version>1.2</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>integration-test</id>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                            <configuration>
+                                <!-- Skips integration tests if the value of skip.integration.tests property is true -->
+                                <skipTests>${skip.integration.tests}</skipTests>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -158,6 +164,9 @@
                     <message>Creating site for ${project.artifactId}, ${project.version}</message>
                     <!-- this does the trick to place every module in the correct subfolder -->
                     <path>${project.distributionManagement.site.url}</path>
+                    <repositoryOwner>Olog</repositoryOwner>
+                    <repositoryName>olog.github.com</repositoryName>
+                    <branch>refs/heads/master</branch>
                     <merge>true</merge>
                 </configuration>
                 <executions>
@@ -169,6 +178,20 @@
                         <phase>site-deploy</phase>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- Used for unit tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <!-- Skips unit tests if the value of skip.unit.tests property is true -->
+                    <skipTests>${skip.unit.tests}</skipTests>
+                    <!-- Excludes integration tests when unit tests are run. ß-->
+                    <excludes>
+                        <exclude>**/IT*.java</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -184,137 +207,8 @@
                 <artifactId>maven-scm-plugin</artifactId>
                 <version>1.8.1</version>
             </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4</version>
-                <executions>
-                    <execution>
-                        <id>cargo-config-filtering</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/main/assembly/cargo.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.12.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.cargo</groupId>
-                <artifactId>cargo-maven2-plugin</artifactId>
-                <version>1.3.1</version>
-                <configuration>
-                    <container>
-                        <containerId>glassfish3x</containerId>
-                        <artifactInstaller>
-                            <groupId>org.glassfish.main.distributions</groupId>
-                            <artifactId>glassfish</artifactId>
-                            <version>${glassfish.version}</version>
-                        </artifactInstaller>
-                        <dependencies>
-                            <dependency>
-                                <groupId>mysql</groupId>
-                                <artifactId>mysql-connector-java</artifactId>
-                            </dependency>
-                        </dependencies>
-                        <output>${project.build.directory}/container.log</output>
-                        <append>false</append>
-                        <log>${project.build.directory}/cargo.log</log>
-                    </container>
-                    <configuration>
-                        <configfiles>
-                            <configfile>
-                                <file>${project.build.directory}/$${project.artifactId}-${project.version}-cargo-inject/config</file>
-                                <todir>cargo-domain/config</todir>
-                            </configfile>
-                        </configfiles>
-                    </configuration>
-                    <deployables>
-                        <deployable>
-                            <groupId>edu.msu.nscl.olog</groupId>
-                            <artifactId>olog-service</artifactId>
-                            <type>war</type>
-                            <properties>
-                                <context>/Olog</context>
-                            </properties>
-                            <location>modules/olog-service/olog/target/olog-service.war</location>
-                        </deployable>
-                    </deployables>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>start-cargo</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>stop-cargo</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>nosetests</executable>
-                    <workingDirectory>modules\pyOlog\pyOlog\test</workingDirectory>
-                    <arguments>
-                        <argument>-v</argument>
-                        <argument>OlogClientTest.py</argument>
-                        <argument>OlogDataTypeTest.py</argument>
-                    </arguments>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.12.4</version>
-                <reportSets>
-                    <reportSet>
-                        <id>integration-tests</id>
-                        <reports>
-                            <report>failsafe-report-only</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
     <profiles>
         <profile>
             <id>multimodule-tag-modules</id>

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+case $1 in
+admin)
+    echo "uid=23004(admin) gid=23004(admin) groups=23004(admin),24009(olog-admins)"
+    ;;
+*)
+    echo "id: $1: No such user"
+esac
+

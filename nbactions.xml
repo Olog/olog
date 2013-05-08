@@ -12,6 +12,7 @@
         <displayName>Run CARGO</displayName>
         <goals>
             <goal>verify</goal>
+            
         </goals>
     </action>
     <action>
