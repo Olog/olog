@@ -116,29 +116,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--         <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>nosetests</executable>
-                    <workingDirectory>modules\pyOlog\pyOlog\test</workingDirectory>
-                    <arguments>
-                        <argument>-v</argument>
-                        <argument>OlogClientTest.py</argument>
-                        <argument>OlogDataTypeTest.py</argument>
-                    </arguments>
-                </configuration>
-            </plugin> 
-            -->
             <!-- Used for integration tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -154,10 +131,38 @@
                         <configuration>
                             <!-- Skips integration tests if the value of skip.integration.tests property is true -->
                             <skipTests>${skip.integration.tests}</skipTests>
+                            <excludes>
+                                <exclude>**/ScalabilityIT.java</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+<!--            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>nosetests</executable>
+                    <workingDirectory>${project.basedir}/../modules/pyOlog/pyOlog/test</workingDirectory>
+                    <arguments>
+                        <argument>-v</argument>
+                        <argument>-s</argument>
+             remove /           <argument>-/-with-xunit</argument>
+             remove /           <argument>-/-xunit-file=${project.build.directory}/failsafe-reports/nosetests.xml</argument>
+                        <argument>OlogClientTest.py</argument>
+                        <argument>OlogDataTypeTest.py</argument>
+                    </arguments>
+                </configuration>
+            </plugin> -->
         </plugins>
         <finalName>OlogIntegration</finalName>
     </build>

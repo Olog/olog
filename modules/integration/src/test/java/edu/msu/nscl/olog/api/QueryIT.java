@@ -100,6 +100,9 @@ public class QueryIT {
         distinctName = client.set(log()
                 .description("distinctName: " + "some details").level("Info")
                 .appendToLogbook(book).appendTag(tagStar));
+        // has: asdfghjkl in the file
+        File f = new File("docxTest.docx");
+        client.add(f, distinctName.getId());
     }
 
     @AfterClass
@@ -425,13 +428,10 @@ public class QueryIT {
      */
     @Test
     public void queryDocxAttachmentTest() {
-        File f = null;
         try {
-            // has: asdfghjkl in the file
-            f = new File("docxTest.docx");
-            client.add(f, distinctName.getId());
+
             //wait for index
-            Thread.sleep(2000);
+            //Thread.sleep(2000);
             assertTrue("Failed to docx file query using findbysearch method ", client
                     .findLogsBySearch("asdfghjkl").size() == 1);
         } catch (Exception e) {
