@@ -11,6 +11,7 @@
         <actionName>CUSTOM-Run CARGO</actionName>
         <displayName>Run CARGO</displayName>
         <goals>
+            <goal>-X</goal>
             <goal>verify</goal>
             
         </goals>
