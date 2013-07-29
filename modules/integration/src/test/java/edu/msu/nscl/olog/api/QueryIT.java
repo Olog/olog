@@ -103,6 +103,9 @@ public class QueryIT {
         // has: asdfghjkl in the file
         File f = new File("docxTest.docx");
         client.add(f, distinctName.getId());
+        File f1 = new File("textFile.txt");
+        client.add(f1, distinctName.getId());
+       // Thread.currentThread().sleep(10000);
     }
 
     @AfterClass
@@ -424,16 +427,18 @@ public class QueryIT {
     }
 
     /**
-     * Test searching for logs based on attachments of docx type
+     * Test searching for logs based on attachments of doc types
      */
     @Test
-    public void queryDocxAttachmentTest() {
+    public void queryDocAttachmentTest() {
         try {
 
             //wait for index
             //Thread.sleep(2000);
-            assertTrue("Failed to docx file query using findbysearch method ", client
-                    .findLogsBySearch("asdfghjkl").size() == 1);
+           // assertTrue("Failed to docx file query using findbysearch method ", client
+           //         .findLogsBySearch("asdfghjkl").size() == 1);
+            assertTrue("Failed to txt file query using findbysearch method ", client
+                    .findLogsBySearch("Hello").size() == 1);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
