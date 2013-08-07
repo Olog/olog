@@ -199,13 +199,10 @@
                 <version>2.4</version>
                 <inherited>false</inherited>
                 <configuration>
+                    <commitByProject>true</commitByProject>
                     <releaseProfiles>multimodule-tag-modules</releaseProfiles>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-scm-plugin</artifactId>
-                <version>1.8.1</version>
             </plugin>
         </plugins>
     </build>
