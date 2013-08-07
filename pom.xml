@@ -57,9 +57,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/Olog/olog.git</connection>
-        <developerConnection>scm:git:https://github.com/Olog/olog.git</developerConnection>
-        <url>https://github.com/Olog/olog</url>
+        <connection>scm:git:ssh://git@github.com/Olog/olog.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/Olog/olog.git</developerConnection>
+        <url>ssh://git@github.com/Olog/olog.git</url>
     </scm>
     <issueManagement>
         <system>jira</system>
