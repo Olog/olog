@@ -31,6 +31,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>8080</servlet.port>
+        <github.projectName>olog</github.projectName>
+	<github.projectOwner>Olog</github.projectOwner>
     </properties>
     <developers>
         <developer>
@@ -57,9 +59,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:ssh://git@github.com/Olog/olog.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/Olog/olog.git</developerConnection>
-        <url>ssh://git@github.com/Olog/olog.git</url>
+        <connection>scm:git:ssh://git@github.com/${github.projectOwner}/${github.projectName}.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/${github.projectOwner}/${github.projectName}.git</developerConnection>
+        <url>ssh://git@github.com/${github.projectOwner}/${github.projectName}.git</url>
     </scm>
     <issueManagement>
         <system>jira</system>
@@ -199,8 +201,39 @@
                 <version>2.4</version>
                 <configuration>
                     <commitByProject>true</commitByProject>
+                    <releaseProfiles>multimodule-tag-modules</releaseProfiles>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>multimodule-tag-modules</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-scm-plugin</artifactId>
+                            <version>1.2</version>
+                            <executions>
+                                <execution>
+                                    <id>multimodule-tag-modules</id>
+                                    <inherited>true</inherited>
+                                    <phase>deploy</phase>
+                                    <configuration>
+                                        <connectionUrl>${project.scm.connectionUrl}</connectionUrl>
+                                        <tag>${project.artifactId}-${project.version}</tag>
+                                    </configuration>
+                                    <goals>
+                                        <goal>tag</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>
