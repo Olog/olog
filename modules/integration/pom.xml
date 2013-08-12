@@ -95,7 +95,7 @@
                             <properties>
                                 <context>/Olog</context>
                             </properties>
-                            <location>modules/olog-service/olog/target/olog-service-${project.version}.war</location>
+                            <location>modules/olog-service/target/olog-service-${project.version}.war</location>
                         </deployable>
                     </deployables>
                 </configuration>

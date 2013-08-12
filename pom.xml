@@ -97,7 +97,7 @@
         </mailingList>
     </mailingLists>
     <modules>
-        <module>modules/olog-service/olog</module>
+        <module>modules/olog-service</module>
         <module>modules/olog-java-api</module>
         <module>modules/pyOlog</module>
         <module>modules/integration</module>
