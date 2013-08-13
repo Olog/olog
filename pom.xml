@@ -31,6 +31,7 @@
         <servlet.port>8080</servlet.port>
         <github.projectName>olog</github.projectName>
 	<github.projectOwner>Olog</github.projectOwner>
+        <github.global.server>github.com</github.global.server>
     </properties>
     <developers>
         <developer>
@@ -155,7 +156,7 @@
             <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
-                <version>0.7</version>
+                <version>0.8</version>
                 <configuration>
                     <message>Creating site for ${project.artifactId}, ${project.version}</message>
                     <!-- this does the trick to place every module in the correct subfolder -->
@@ -196,8 +197,39 @@
                 <configuration>
                     <commitByProject>true</commitByProject>
                     <localCheckout>true</localCheckout>
+                    <releaseProfiles>multimodule-tag-modules</releaseProfiles>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>multimodule-tag-modules</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-scm-plugin</artifactId>
+                            <version>1.2</version>
+                            <executions>
+                                <execution>
+                                    <id>multimodule-tag-modules</id>
+                                    <inherited>true</inherited>
+                                    <phase>deploy</phase>
+                                    <configuration>
+                                        <connectionUrl>${project.scm.connectionUrl}</connectionUrl>
+                                        <tag>${project.artifactId}-${project.version}</tag>
+                                    </configuration>
+                                    <goals>
+                                        <goal>tag</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>
