@@ -8,6 +8,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import static edu.msu.nscl.olog.api.LogITUtil.*;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -25,6 +27,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 
 import edu.msu.nscl.olog.api.OlogClientImpl.OlogClientBuilder;
 
@@ -51,6 +56,9 @@ public class SetDeleteIT {
 	// default log sets
 	private static Collection<LogBuilder> logs1;
 	private static Collection<LogBuilder> logs2;
+	
+	// Default unique string for a set of tests
+	private static String uniqueString = String.valueOf(System.currentTimeMillis());
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -64,24 +72,23 @@ public class SetDeleteIT {
 		propertyOwner = "me";
 
 		// Add a default logbook
-		defaultLogBook = logbook("DefaultLogBook").owner(logbookOwner);
+		defaultLogBook = logbook("DefaultLogBook"+uniqueString).owner(logbookOwner);
 		client.set(defaultLogBook);
 		// Add a default Tag
-		defaultTag = tag("defaultTag");
+		defaultTag = tag("defaultTag"+uniqueString);
 		client.set(defaultTag);
 		// Add a default Property
 		defaultAttributeName = "defaultAttribute";
-		defaultProperty = property("defaultProperty").attribute(
-				defaultAttributeName);
+		defaultProperty = property("defaultProperty"+uniqueString).attribute(defaultAttributeName);
 		client.set(defaultProperty);
 		// define the default logs
 		defaultLog1 = log().description("defaulLog1")
+				.description("some details" + uniqueString).level("Info")
+				.appendToLogbook(defaultLogBook);
+		defaultLog2 = log().description("defaultLog2" + uniqueString)
 				.description("some details").level("Info")
 				.appendToLogbook(defaultLogBook);
-		defaultLog2 = log().description("defaultLog2")
-				.description("some details").level("Info")
-				.appendToLogbook(defaultLogBook);
-		defaultLog3 = log().description("defaultLog3")
+		defaultLog3 = log().description("defaultLog3" + uniqueString)
 				.description("some details").level("Info")
 				.appendToLogbook(defaultLogBook);
 		// define default sets
@@ -97,6 +104,7 @@ public class SetDeleteIT {
 	public static void tearDownAfterClass() throws Exception {
 		client.deleteLogbook(defaultLogBook.build().getName());
 		client.deleteTag(defaultTag.toXml().getName());
+		client.deleteProperty(defaultProperty.toXml().getName());
 	}
 
 	@Before
@@ -113,14 +121,13 @@ public class SetDeleteIT {
 	 */
 	@Test
 	public void setLogbookTest() {
-		LogbookBuilder logbook = logbook("testLogBook").owner(logbookOwner);
+		LogbookBuilder logbook = logbook("testLogbook").owner(logbookOwner);
 		try {
 			// set a logbook
 			Logbook returnLogbook = client.set(logbook);
 			assertTrue("failed to set the testLogbook, the return was null",
 					returnLogbook != null);
-			assertTrue(
-					"failed to set the testLogbook, created logbook not eq to payload",
+			assertTrue("failed to set the testLogbook, created logbook not eq to payload",
 					returnLogbook.equals(logbook.build()));
 			assertTrue("failed to set the testLogBook", client.listLogbooks()
 					.contains(logbook.build()));
@@ -145,8 +152,7 @@ public class SetDeleteIT {
 			Tag returnTag = client.set(tag);
 			assertTrue("failed to set the testTag, the return was null",
 					returnTag != null);
-			assertTrue(
-					"failed to set the testTag, tag logbook not eq to payload",
+			assertTrue("failed to set the testTag, tag logbook not eq to payload",
 					returnTag.equals(tag.build()));
 			assertTrue("failed to set the testTag",
 					client.listTags().contains(tag.build()));
@@ -170,8 +176,7 @@ public class SetDeleteIT {
 			Property setProperty = client.set(property);
 			assertTrue("failed to set the testProperty, the return was null",
 					setProperty != null);
-			assertTrue(
-					"failed to set testProperty, setProperty not equal to sent property",
+			assertTrue("failed to set testProperty, setProperty not equal to sent property",
 					setProperty.equals(property.build()));
 			assertTrue("failed to set testProperty", client.listProperties()
 					.contains(property.build()));
@@ -189,17 +194,13 @@ public class SetDeleteIT {
 	 * Set Property with attributes
 	 */
 	@Test
-	public void setTagwithAttributeTest() {
-		PropertyBuilder property = property("testPropertyWithAttibutes")
-				.attribute("testAttribute", "testAttributeVal");
+	public void setPropertyWithAttributeTest() {
+		PropertyBuilder property = property("testPropertyWithAttibutes" + uniqueString).attribute("testAttribute","val");
 		try {
 			Property setProperty = client.set(property);
-			assertTrue("failed to set the testProperty, the return was null",
-					setProperty != null);
-			Property searchedProperty = client.getProperty(property.build()
-					.getName());
-			assertTrue(
-					"failed to set the testPropertyWithAttibutes",
+			assertTrue("failed to set the testProperty, the return was null", setProperty != null);
+			Property searchedProperty = client.getProperty(property.build().getName());
+			assertTrue("failed to set the testPropertyWithAttibutes",
 					searchedProperty.getName().equalsIgnoreCase(
 							property.build().getName())
 							&& searchedProperty.getAttributes().containsAll(
@@ -217,28 +218,28 @@ public class SetDeleteIT {
 	 */
 	@Test
 	public void setLogTest() {
-		LogBuilder log = log().description("testLog")
+		LogBuilder log = log().description("testLog" + uniqueString)
 				.appendDescription("some details").level("Info")
 				.appendToLogbook(defaultLogBook);
 
 		Map<String, String> map = new Hashtable<String, String>();
-		map.put("search", "testLog*");
+		map.put("search", "*"+uniqueString+"*");
 		Log result = null;
 
 		try {
 			// set a log
 			result = client.set(log);
-			// check if the returned id is the same
+			// Check if the result matches what was requested
+			assertTrue("Failed to create log entry", compare(log, result));
+			// Search the service to ensure the log entry is created and searchable 
 			Collection<Log> queryResult = client.findLogs(map);
-			assertTrue("The returned id is not valid",
-					queryResult.contains(result));
+			assertTrue("Failed to search for the created log entry", contains(queryResult, log));
 		} catch (Exception e) {
 			fail(e.getCause().toString());
 		} finally {
 			// delete a log
 			client.delete(log(result));
-			assertFalse("Failed to clean up the testLog", client.findLogs(map)
-					.contains(result));
+			assertFalse("Failed to clean up the testLog", client.findLogs(map).contains(result));
 		}
 
 	}
@@ -250,9 +251,9 @@ public class SetDeleteIT {
 	@Test
 	public void setLogsTest() {
 		LogBuilder log1 = log().description("testLog1")
-				.appendDescription("some details").level("Info")
+				.appendDescription("some details" + uniqueString).level("Info")
 				.appendToLogbook(defaultLogBook);
-		LogBuilder log2 = log().description("testLog2")
+		LogBuilder log2 = log().description("testLog2" + uniqueString)
 				.appendDescription("some details").level("Info")
 				.appendToLogbook(defaultLogBook);
 		Collection<LogBuilder> logs = new ArrayList<LogBuilder>();
@@ -260,7 +261,7 @@ public class SetDeleteIT {
 		logs.add(log2);
 
 		Map<String, String> map = new Hashtable<String, String>();
-		map.put("search", "testLog*");
+		map.put("search", "*"+uniqueString+"*");
 		Collection<Log> result = null;
 		Collection<Log> queryResult;
 
@@ -268,12 +269,10 @@ public class SetDeleteIT {
 			// set a group of channels
 			result = client.set(logs);
 			// check the returned logids match the number expected
-			assertTrue("unexpected return after creation of log entries",
-					result.size() == logs.size());
+			assertTrue("unexpected return after creation of log entries", compare(logs, result));
 			// query to check if the logs are indeed in olog
 			queryResult = client.findLogs(map);
-			assertTrue("set logs not found in the olog db ",
-					checkEqualityWithoutID(queryResult, logs));
+			assertTrue("set logs not found in the olog db ", compare(logs, queryResult));
 		} catch (Exception e) {
 			fail(e.getCause().toString());
 		} finally {
@@ -288,6 +287,7 @@ public class SetDeleteIT {
 			}
 		}
 	}
+
 
 	@Test
 	public void addAttachment2Log() {
@@ -374,9 +374,9 @@ public class SetDeleteIT {
 	 */
 	@Test
 	public void setLogWithProperty() {
-		PropertyBuilder testProp = property("test Property").attribute(
+		PropertyBuilder testProp = property("testProperty" + uniqueString).attribute(
 				"attributeName").attribute("attributeName2");
-		LogBuilder log = log().description("testLog")
+		LogBuilder log = log().description("testLog" + uniqueString)
 				.appendDescription("test Log").level("Info")
 				.appendToLogbook(defaultLogBook).appendTag(defaultTag);
 		Property setProperty = null;
@@ -384,17 +384,16 @@ public class SetDeleteIT {
 		try {
 			setProperty = client.set(testProp);
 			setLog = client.set(log.appendProperty(
-					property("test Property").attribute("attributeName",
-							"value1").attribute("attributeName2", 
-                                                        "value2")));
+					property("testProperty" + uniqueString)
+					.attribute("attributeName", "value1")
+					.attribute("attributeName2", "value2")));
 			assertTrue("failed to set test log", setLog != null);
 			Collection<Property> properties = client
-					.findLogById(setLog.getId()).getProperty("test Property");
+					.findLogById(setLog.getId()).getProperty("testProperty" + uniqueString);
 			assertTrue("check if properties correctly attached",
 					properties.iterator().next().getAttributes().size() == 2);
-			assertTrue(
-					"Check if the multi value properties are corectly attached.",
-					properties.containsAll(setLog.getProperty("test Property")));
+			assertTrue("Check if the multi value properties are corectly attached.",
+					properties.containsAll(setLog.getProperty("testProperty" + uniqueString)));
 		} catch (Exception e) {
 			fail(e.getMessage());
 		} finally {
@@ -438,10 +437,10 @@ public class SetDeleteIT {
 			client.set(defaultTag, LogUtil.getLogIds(setLogsIds));
 			// check if the Tags was added
 			queryResult = client.findLogs(map);
-			assertTrue(
-					"Failed to add " + tagName + " to "
-							+ LogUtil.getLogIds(setLogsIds).toString(),
-					checkEqualityWithoutID(queryResult, logs1));
+//			assertTrue(
+//					"Failed to add " + tagName + " to "
+//							+ LogUtil.getLogIds(setLogsIds).toString(),
+//					checkEqualityWithoutID(queryResult, logs1));
 		} catch (Exception e) {
 			fail("setTag2Log" + e.getMessage());
 		} finally {
@@ -468,8 +467,7 @@ public class SetDeleteIT {
 					setLogs2.size() == 1);
 			// create a test logbook
 			client.set(testLogBook);
-			assertTrue("failed to create testlogbook with no entires.", client
-					.findLogs(map).size() == 0);
+			assertTrue("failed to create testlogbook with no entires.", client.findLogs(map).size() == 0);
 			// update a logbook with a new entry
 			Collection<Long> logIds = new ArrayList<Long>();
 			for (Log log : setLogs2) {
@@ -478,10 +476,8 @@ public class SetDeleteIT {
 			client.set(testLogBook, logIds);
 			queryResult = client.findLogs(map);
 			// TODO : equality for queryResult.equals(setLogs2) should be true
-			assertTrue(
-					"failed to set a logbook onto a log",
-					queryResult.size() == setLogs2.size()
-							&& queryResult.containsAll(setLogs2));
+			assertTrue("failed to set a logbook onto a log", compareLog(setLogs2, queryResult));
+			
 			// new set
 			for (Log log : setLogs1) {
 				logIds.add(log.getId());
@@ -513,17 +509,13 @@ public class SetDeleteIT {
 		try {
 			log1 = client.set(defaultLog1.appendTag(defaultTag));
 			log2 = client.set(defaultLog2.appendTag(defaultTag));
-			Collection<Log> queryResult = client.findLogsByTag(defaultTag
-					.build().getName());
-			assertTrue(
-					"Failed to attach defaultTag to defaultLog1 and defaultLog2",
-					queryResult.contains(log1) && queryResult.contains(log2));
+			Collection<Log> queryResult = client.findLogsByTag(defaultTag.build().getName());
+			assertTrue("Failed to attach defaultTag to defaultLog1 and defaultLog2",
+					contains(queryResult, log1) && contains(queryResult, log2));
 			client.delete(defaultTag, log1.getId());
 			queryResult = client.findLogsByTag(defaultTag.build().getName());
-			assertTrue("Failed to remove defaultTag from defaultLog1",
-					!queryResult.contains(log1));
-			assertTrue("Removed defaultTag from defaultLog2",
-					queryResult.contains(log2));
+			assertTrue("Failed to remove defaultTag from defaultLog1", !contains(queryResult, log1));
+			assertTrue("Removed defaultTag from defaultLog2", contains(queryResult, log2));
 		} catch (Exception e) {
 			fail(e.getCause().toString());
 		} finally {
@@ -550,16 +542,15 @@ public class SetDeleteIT {
 					.attribute(defaultAttributeName, "log2")));
 			Collection<Log> queryResult = client
 					.findLogsByProperty(defaultProperty.build().getName());
-			assertTrue(
-					"Failed to attach defaultProperty to defaultLog1 and defaultLog2",
-					queryResult.contains(log1) && queryResult.contains(log2));
+			assertTrue("Failed to attach defaultProperty to defaultLog1 and defaultLog2",
+					contains(queryResult, log1) && contains(queryResult, log2));
 			client.delete(defaultProperty, log1.getId());
 			queryResult = client.findLogsByProperty(defaultProperty.build()
 					.getName());
 			assertTrue("Failed to remove defaultProperty from defaultLog1",
-					!queryResult.contains(log1));
+					!contains(queryResult, log1));
 			assertTrue("Removed defaultProperty from defaultLog2",
-					queryResult.contains(log2));
+					contains(queryResult, log2));
 		} catch (Exception e) {
 			fail(e.getCause().toString());
 		} finally {
@@ -591,16 +582,15 @@ public class SetDeleteIT {
 			log2 = client.set(defaultLog2.appendToLogbook(testLogbook));
 			Collection<Log> queryResult = client.findLogsByLogbook(testLogbook
 					.build().getName());
-			assertTrue(
-					"Failed to attach testLogbook to defaultLog1 and defaultLog2",
-					queryResult.contains(log1) && queryResult.contains(log2));
+			assertTrue("Failed to attach testLogbook to defaultLog1 and defaultLog2",
+					contains(queryResult, log1) && contains(queryResult, log2));
 			client.delete(testLogbook, log1.getId());
 			queryResult = client.findLogsByLogbook(testLogbook.build()
 					.getName());
 			assertTrue("Failed to remove testLogbook from defaultLog1",
-					!queryResult.contains(log1));
+					!contains(queryResult, log1));
 			assertTrue("Removed testLogbook from defaultLog2",
-					queryResult.contains(log2));
+					contains(queryResult, log2));
 		} catch (Exception e) {
 			fail(e.getCause().toString());
 		} finally {
@@ -616,44 +606,6 @@ public class SetDeleteIT {
 	@Test
 	public void deleteLogbookFromLogs() {
 
-	}
-
-	/**
-	 * This seems like an incorrect equality test but don't know how to test if
-	 * the log I am sending has indeed been set/added since I don't have the id
-	 * in the builder
-	 * 
-	 * @param returnedLogs
-	 * @param setLogs
-	 * @return
-	 */
-	private static boolean checkEqualityWithoutID(Collection<Log> returnedLogs,
-			Collection<LogBuilder> setLogs) {
-		Collection<String> logSubjects = LogUtil
-				.getLogDescriptions(returnedLogs);
-		for (LogBuilder logBuilder : setLogs) {
-			if (!logSubjects.contains(logBuilder.build().getDescription()))
-				return false;
-		}
-		return true;
-	}
-
-	/**
-	 * This seems like an incorrect equality test but don't know how to test if
-	 * the log I am sending has indeed been set/added since I don't have the id
-	 * in the builder
-	 * 
-	 * @param returnedLogs
-	 * @param setLogs
-	 * @return
-	 */
-	private static boolean checkEqualityWithoutID(Collection<Log> returnedLogs,
-			LogBuilder setLog) {
-		Collection<String> logSubjects = LogUtil
-				.getLogDescriptions(returnedLogs);
-		if (!logSubjects.contains(setLog.build().getDescription()))
-			return false;
-		return true;
 	}
 
 }

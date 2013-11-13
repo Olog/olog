@@ -1,6 +1,7 @@
 package edu.msu.nscl.olog.api;
 
 import static org.junit.Assert.*;
+import static edu.msu.nscl.olog.api.LogITUtil.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,9 +27,9 @@ public class UpdateIT {
 
 	private static OlogClient client;
 
-	private static TagBuilder defaultTag = tag("defaultTag");
-	private static LogbookBuilder defaultLogbook = logbook("defaultLogbook")
-			.owner("me");
+	private static final String uniqueString = String.valueOf(System.currentTimeMillis());
+	private static TagBuilder defaultTag = tag("defaultTag" + uniqueString);
+	private static LogbookBuilder defaultLogbook = logbook("defaultLogbook" + uniqueString).owner("me");
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
@@ -74,7 +75,35 @@ public class UpdateIT {
 
 	@Test
 	public void updateLogs() {
-
+	    	Log testLog1 = null;
+		Log testLog2 = null;
+		try {
+			// create test logs
+			testLog1 = client.set(log().description("testLog1_updateLogs "+ uniqueString)
+					.appendDescription("test log")
+					.appendToLogbook(defaultLogbook).level("Info"));
+			testLog2 = client.set(log().description("testLog2_updateLogs " + uniqueString)
+					.appendDescription("test log")
+					.appendToLogbook(defaultLogbook).level("Info"));
+			
+			assertTrue("failed to create test logs", client
+					.findLogsBySearch("*"+uniqueString+"*").size() == 2);
+			// add default tag testLog1 & testLog2
+			Collection<LogBuilder> logBuilders = new ArrayList<LogBuilder>();
+			logBuilders.add(log(testLog1).appendDescription(" Edited "));
+			logBuilders.add(log(testLog2).appendDescription(" Edited "));
+			client.update(logBuilders);
+			// check if the logs were updated
+			Collection<Log> QueryResult = client.findLogsBySearch("*Edited*");
+			assertTrue("failed to update a group of logs(testLog1, testLog2)", QueryResult.size() == 2);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		} finally {
+			if (testLog1 != null)
+				client.delete(testLog1.getId());
+			if (testLog2 != null)
+				client.delete(testLog2.getId());
+		}
 	}
 
 	@Test
@@ -276,14 +305,13 @@ public class UpdateIT {
 	 */
 	@Test
 	public void updateProperty() {
-		PropertyBuilder property = property("testProperty").attribute(
-				"orignalAttribute");
+		PropertyBuilder property = property("testProperty" + uniqueString)
+			.attribute("orignalAttribute");
 		try {
 			client.set(property);
 			Property searchedProperty = client.getProperty(property.build()
 					.getName());
-			assertTrue(
-					"failed to set the testPropertyWithAttibutes",
+			assertTrue("failed to set the testPropertyWithAttibutes",
 					searchedProperty.getName().equalsIgnoreCase(
 							property.build().getName())
 							&& searchedProperty.getAttributes().containsAll(
@@ -307,7 +335,7 @@ public class UpdateIT {
 
 	@Test
 	public void updateProperty2log() {
-		PropertyBuilder testProperty = property("testProperty1").attribute(
+		PropertyBuilder testProperty = property("testProperty1_"+uniqueString).attribute(
 				"testAttribute").attribute("testAttribute2");
 		Log testLog1 = null;
 		Log testLog2 = null;
@@ -323,8 +351,7 @@ public class UpdateIT {
 					.appendToLogbook(defaultLogbook).level("Info"));
 			// create a Property with no logs
 			client.set(testProperty);
-			assertTrue(
-					"failed to create an empty tag testTag1",
+			assertTrue("failed to create an empty tag testTag1",
 					client.findLogsByProperty(testProperty.build().getName(),
 							"testAttribute", "*").size() == 0);
 			// add testLog1 to testProperty
@@ -339,7 +366,8 @@ public class UpdateIT {
 					checkEqualityWithoutID(queryResult, testLog1));
                         //check if the log has both attributes in the property
                         assertTrue("testProperty does not has both attributes",
-					queryResult.iterator().next().getProperty("testProperty1").iterator().next().getAttributes().size()== 2);
+					queryResult.iterator().next().getProperty("testProperty1_"+uniqueString)
+					.iterator().next().getAttributes().size()== 2);
 			// add testLog2 to testProperty
 			client.update(testProperty, testLog2.getId());
 			// check if the testLog2 was updated with the testProperty
@@ -394,8 +422,7 @@ public class UpdateIT {
 	 * @param setLogs
 	 * @return
 	 */
-	private static boolean checkEqualityWithoutID(Collection<Log> returnedLogs,
-			LogBuilder setLog) {
+	private static boolean checkEqualityWithoutID(Collection<Log> returnedLogs, LogBuilder setLog) {
 		return checkEqualityWithoutID(returnedLogs, setLog.build());
 	}
 
