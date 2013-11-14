@@ -6,6 +6,8 @@ import static edu.msu.nscl.olog.api.TagBuilder.tag;
 import static edu.msu.nscl.olog.api.PropertyBuilder.*;
 import static org.junit.Assert.assertTrue;
 
+import static edu.msu.nscl.olog.api.LogITUtil.*;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -47,6 +49,8 @@ import java.io.FileWriter;
 public class QueryIT {
 
     private static OlogClient client;
+    
+    private final static String uniqueTestId = String.valueOf(System.currentTimeMillis());
     // Logs
     static private Log pvk_01;
     static private Log pvk_02;
@@ -61,7 +65,7 @@ public class QueryIT {
     static LogbookBuilder book = logbook("book");
     static LogbookBuilder book2 = logbook("book2");
     // Property
-    static PropertyBuilder property1 = property("testProperty").attribute(
+    static PropertyBuilder property1 = property("testProperty"+uniqueTestId).attribute(
             "testAttribute");
     private static int initialLogCount;
     private static int initialTagCount;
@@ -169,8 +173,7 @@ public class QueryIT {
 
     @Test
     public void querySingleLog() {
-        assertTrue("failed to search using the logId",
-                client.findLogById(pvk_01.getId()).equals(pvk_01));
+        assertTrue("failed to search using the logId", new ComparableLog(client.findLogById(pvk_01.getId())).equals(new ComparableLog(pvk_01)));
     }
 
     /**
@@ -241,7 +244,7 @@ public class QueryIT {
         assertTrue(
                 "Failed to search based on the log descrition expected 1 found "
                 + queryResult.size(), queryResult.size() == 1
-                && queryResult.contains(pvk_01));
+                && contains(queryResult, pvk_01));
         // search for "some detail" which matches multiple logs.
         map.clear();
         map.add("search", "*some details");
@@ -249,8 +252,9 @@ public class QueryIT {
         assertTrue(
                 "Failed to search based on the log description expected 2 found "
                 + queryResult.size(),
-                queryResult.size() == 2 && queryResult.contains(pvk_03)
-                && queryResult.contains(distinctName));
+                queryResult.size() == 2 
+                && contains(queryResult, pvk_03)
+                && contains(queryResult, distinctName));
         // search for logs with one
         map.clear();
         map.add("search", pvk_01.getDescription());
@@ -259,8 +263,9 @@ public class QueryIT {
         assertTrue(
                 "Failed to search based on the log descrition expected 2 found "
                 + queryResult.size(),
-                queryResult.size() == 2 && queryResult.contains(pvk_01)
-                && queryResult.contains(pvk_02));
+                queryResult.size() == 2 
+                && contains(queryResult, pvk_01)
+                && contains(queryResult, pvk_02));
 
     }
 
@@ -298,10 +303,8 @@ public class QueryIT {
                 // A search is required because the response from the service
                 // for a put only contains Id info and not the create time.
 
-                first = client.findLogsBySearch("Test log1 for time*")
-                        .iterator().next();
-                third = client.findLogsBySearch("Test log3 for time*")
-                        .iterator().next();
+                first = client.findLogsBySearch("Test log1 for time*").iterator().next();
+                third = client.findLogsBySearch("Test log3 for time*").iterator().next();
             }
 
             // check the _start_ search condition
@@ -401,12 +404,12 @@ public class QueryIT {
         // .../logs?property1[attr1]=attr1Value&property1[attr2]=attr2Value
         // return all logs with property1 having attr1=attr1Value AND
         // attr2=attr2Value
-        Collection<Log> queryResult = client.findLogsByProperty("testProperty",
+        Collection<Log> queryResult = client.findLogsByProperty("testProperty"+uniqueTestId,
                 "testAttribute", "*");
         assertTrue("failed to search based on property/attributes",
                 queryResult.size() == 2);
 
-        queryResult = client.findLogsByProperty("testProperty",
+        queryResult = client.findLogsByProperty("testProperty"+uniqueTestId,
                 "testAttribute", "log01");
         assertTrue("failed to search based on property/attributes",
                 queryResult.size() == 1);
@@ -418,11 +421,11 @@ public class QueryIT {
      */
     @Test
     public void queryPropertyTest() {
-        Collection<Log> queryResult = client.findLogsByProperty("testProperty");
+        Collection<Log> queryResult = client.findLogsByProperty("testProperty"+uniqueTestId);
         assertTrue("Failed to query based on property name alone.",
                 queryResult.size() == 2);
         assertTrue("Failed to query based on property name alone.",
-                queryResult.contains(pvk_01) && queryResult.contains(pvk_02));
+                contains(queryResult, pvk_01) && contains(queryResult, pvk_02));
 
     }
 

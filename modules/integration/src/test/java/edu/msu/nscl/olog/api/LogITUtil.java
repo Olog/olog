@@ -112,7 +112,7 @@ public class LogITUtil {
 	}
 	
 	
-	static class ComparableLog{
+	public static class ComparableLog{
 	   
 	    private String description;
 	    private String level;
@@ -122,7 +122,7 @@ public class LogITUtil {
 	    /**
 	     * @param log
 	     */
-	    private ComparableLog(Log log) {
+	    ComparableLog(Log log) {
 		this.description = log.getDescription();
 		this.level = log.getLevel();
 		this.logbooks = log.getLogbooks();

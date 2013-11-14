@@ -454,9 +454,9 @@ public class SetDeleteIT {
 	 */
 	@Test
 	public void setLogbook2LogsTest() {
-		LogbookBuilder testLogBook = logbook("testLogBook").owner(logbookOwner);
+		LogbookBuilder testLogBook = logbook("testLogBook"+uniqueString).owner(logbookOwner);
 		Map<String, String> map = new Hashtable<String, String>();
-		map.put("logbook", "testLogBook");
+		map.put("logbook", "testLogBook"+uniqueString);
 		Collection<Log> queryResult;
 		Collection<Log> setLogs1 = null;
 		Collection<Log> setLogs2 = null;
