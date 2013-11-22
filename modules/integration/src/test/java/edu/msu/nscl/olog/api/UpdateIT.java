@@ -93,10 +93,10 @@ public class UpdateIT {
 			logBuilders.add(log(testLog1).appendDescription(" Edited "));
 			logBuilders.add(log(testLog2).appendDescription(" Edited "));
 			Collection<Log> result = client.update(logBuilders);
-			System.out.println(result);
+			assertTrue("failed to update a group of logs(testLog1, testLog2) " + result, result.size() == 2);
 			// check if the logs were updated
 			Collection<Log> QueryResult = client.findLogsBySearch("*Edited*");
-			assertTrue("failed to update a group of logs(testLog1, testLog2)..expected 2 found "+QueryResult.size(), QueryResult.size() == 2);
+			assertTrue("failed to update a group of logs(testLog1, testLog2) " + QueryResult, QueryResult.size() == 2);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		} finally {
