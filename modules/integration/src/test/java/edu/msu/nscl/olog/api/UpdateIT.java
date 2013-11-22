@@ -95,7 +95,7 @@ public class UpdateIT {
 			client.update(logBuilders);
 			// check if the logs were updated
 			Collection<Log> QueryResult = client.findLogsBySearch("*Edited*");
-			assertTrue("failed to update a group of logs(testLog1, testLog2)", QueryResult.size() == 2);
+			assertTrue("failed to update a group of logs(testLog1, testLog2)..expected 2 found "+QueryResult.size(), QueryResult.size() == 2);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		} finally {
