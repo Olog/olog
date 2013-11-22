@@ -92,7 +92,8 @@ public class UpdateIT {
 			Collection<LogBuilder> logBuilders = new ArrayList<LogBuilder>();
 			logBuilders.add(log(testLog1).appendDescription(" Edited "));
 			logBuilders.add(log(testLog2).appendDescription(" Edited "));
-			client.update(logBuilders);
+			Collection<Log> result = client.update(logBuilders);
+			System.out.println(result);
 			// check if the logs were updated
 			Collection<Log> QueryResult = client.findLogsBySearch("*Edited*");
 			assertTrue("failed to update a group of logs(testLog1, testLog2)..expected 2 found "+QueryResult.size(), QueryResult.size() == 2);
