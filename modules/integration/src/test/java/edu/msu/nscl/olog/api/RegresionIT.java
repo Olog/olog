@@ -30,7 +30,7 @@ public class RegresionIT {
                 .create();
         client = OlogClientImpl.OlogClientBuilder.serviceURL().withHTTPAuthentication(true).username("olog").password("olog")
                 .create();
-        String filePath = OlogClientIT.class.getResource("RegresionTest.class").getPath();
+        String filePath = OlogClientIT.class.getResource("RegresionIT.class").getPath();
         path = filePath.substring(0,filePath.indexOf("target")) + "src/test/java/edu/msu/nscl/olog/api/";
     }
 

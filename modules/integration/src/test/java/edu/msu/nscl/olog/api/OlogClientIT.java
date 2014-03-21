@@ -24,7 +24,7 @@ public class OlogClientIT {
     public static void prepareTest() throws Exception {
         client = OlogClientImpl.OlogClientBuilder.serviceURL().withHTTPAuthentication(true).username("olog").password("olog")
                 .create();
-        String filePath = OlogClientIT.class.getResource("OlogClientTest.class").getPath();
+        String filePath = OlogClientIT.class.getResource("OlogClientIT.class").getPath();
         File outputFile = new File(filePath.substring(0,filePath.indexOf("target")) + "src/test/java/edu/msu/nscl/olog/api/OlogClientTestResult.txt");
         out = new BufferedWriter(new FileWriter(outputFile));
     }

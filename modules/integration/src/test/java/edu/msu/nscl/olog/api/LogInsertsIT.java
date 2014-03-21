@@ -21,7 +21,7 @@ public class LogInsertsIT {
     public static void prepareTest() throws Exception {
         client = OlogClientImpl.OlogClientBuilder.serviceURL().withHTTPAuthentication(true).username("olog").password("olog")
                 .create();
-        String filePath = LogInsertsIT.class.getResource("LogInsertsTest.class").getPath();
+        String filePath = LogInsertsIT.class.getResource("LogInsertsIT.class").getPath();
         File outputFile = new File(filePath.substring(0,filePath.indexOf("target")) + "src/test/java/edu/msu/nscl/olog/api/LogInsertTestResult.txt");
         out = new BufferedWriter(new FileWriter(outputFile));
     }
