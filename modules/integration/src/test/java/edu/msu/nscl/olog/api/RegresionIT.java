@@ -28,8 +28,6 @@ public class RegresionIT {
     public static void prepareTest() throws Exception {
         client = OlogClientImpl.OlogClientBuilder.serviceURL().withHTTPAuthentication(true).username("olog").password("olog")
                 .create();
-        client = OlogClientImpl.OlogClientBuilder.serviceURL().withHTTPAuthentication(true).username("olog").password("olog")
-                .create();
         String filePath = OlogClientIT.class.getResource("RegresionIT.class").getPath();
         path = filePath.substring(0,filePath.indexOf("target")) + "src/test/java/edu/msu/nscl/olog/api/";
     }
@@ -60,9 +58,7 @@ public class RegresionIT {
     @Test
     public void findLogByEntryId() throws JAXBException, IOException, SAXException {
         Map<String,String> map = new HashMap<String, String>();
-        map.put("id", "63034");
-        map.put("limit", "20");
-        map.put("page", "1");
+        map.put("id", "474");
         Collection<Log> logs = client.findLogs(map);
         JAXBContext jaxbCtx = JAXBContext.newInstance(XmlLogs.class);
         Marshaller marshaller = jaxbCtx.createMarshaller();
@@ -82,9 +78,7 @@ public class RegresionIT {
     @Test
     public void findLogByEntryIdWithHistory() throws JAXBException, IOException, SAXException {
         Map<String,String> map = new HashMap<String, String>();
-        map.put("id", "63034");
-        map.put("limit", "20");
-        map.put("page", "1");
+        map.put("id", "474");
         map.put("history","true");
         Collection<Log> logs = client.findLogs(map);
         JAXBContext jaxbCtx = JAXBContext.newInstance(XmlLogs.class);

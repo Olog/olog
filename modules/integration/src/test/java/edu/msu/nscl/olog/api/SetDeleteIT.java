@@ -463,8 +463,7 @@ public class SetDeleteIT {
 		try {
 			setLogs1 = client.set(logs1);
 			setLogs2 = client.set(logs2);
-			assertTrue("setLogs2 should only have a single log",
-					setLogs2.size() == 1);
+			assertTrue("setLogs2 should only have a single log", setLogs2.size() == 1);
 			// create a test logbook
 			client.set(testLogBook);
 			assertTrue("failed to create testlogbook with no entires.", client.findLogs(map).size() == 0);
