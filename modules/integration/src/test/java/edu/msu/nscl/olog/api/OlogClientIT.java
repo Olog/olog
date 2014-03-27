@@ -3,7 +3,6 @@ package edu.msu.nscl.olog.api;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.BufferedWriter;
@@ -62,7 +61,10 @@ public class OlogClientIT {
 
     @Test
     public void insertLogTest2() throws IOException {
-        Log log = client.getLog(107854l);
+        Map<String,String> map = new HashMap<String, String>();
+        map.put("page", "1");
+        map.put("limit", "1");
+        Log log = client.findLogs(map).iterator().next();
         LogBuilder builder = LogBuilder.log(log);
         builder =  builder.id(null);
         long startTime = System.nanoTime();
@@ -77,7 +79,10 @@ public class OlogClientIT {
 
     @Test
     public void insertLogTest() throws IOException {
-        Log log = client.getLog(22121l);
+        Map<String,String> map = new HashMap<String, String>();
+        map.put("page", "1");
+        map.put("limit", "1");
+        Log log = client.findLogs(map).iterator().next();
         LogBuilder builder = LogBuilder.log(log);
         builder =  builder.id(null);
         long startTime = System.nanoTime();
@@ -88,21 +93,6 @@ public class OlogClientIT {
         out.newLine();
     }
 
-
-
-    @Test
-    public void insertLogTest3() throws IOException {
-        Log log = client.getLog(5l);
-        LogBuilder builder = LogBuilder.log(log);
-        builder =  builder.id(null);
-        long startTime = System.nanoTime();
-        Log newLog = client.set(builder);
-        long endTime = System.nanoTime();
-        double totalTime =(endTime - startTime) / 1000000000.0;
-        out.write(" Time consume to insert a log  is: " + totalTime + "(s)");
-        out.newLine();
-
-    }
 
     @Test
     public void findLogByDateTest() throws IOException {
@@ -139,8 +129,12 @@ public class OlogClientIT {
 
     @Test
     public void findLogById() throws OlogException, IOException {
+        Map<String,String> map = new HashMap<String, String>();
+        map.put("page", "1");
+        map.put("limit", "1");
+        Log log = client.findLogs(map).iterator().next();
         long startTime = System.nanoTime();
-        Log log = client.getLog(27455l);
+        Log log2 = client.getLog(log.getId());
         long endTime = System.nanoTime();
         double totalTime =(endTime - startTime) / 1000000000.0;
         out.write(" Time consume to find a log by id is: " + totalTime + "(s)");
@@ -150,8 +144,12 @@ public class OlogClientIT {
 
     @Test
     public void removeLog() throws OlogException, IOException {
+        Map<String,String> map = new HashMap<String, String>();
+        map.put("page", "1");
+        map.put("limit", "1");
+        Log log = client.findLogs(map).iterator().next();
         long startTime = System.nanoTime();
-        client.delete(27455l);
+        client.delete(log.getId());
         long endTime = System.nanoTime();
         double totalTime =(endTime - startTime) / 1000000000.0;
         out.write(" Time consume to delete a log  is: " + totalTime + "(s)");
@@ -162,8 +160,9 @@ public class OlogClientIT {
 
     @Test
     public void findPropertyByName() throws IOException, OlogException {
+        Collection<Property> prop = client.listProperties();
         long startTime = System.nanoTime();
-        Property property = client.getProperty("johnprop");
+        Property property = client.getProperty(prop.iterator().next().getName());
         long endTime = System.nanoTime();
         double totalTime =(endTime - startTime) / 1000000000.0;
         out.write(" Time consume to find a property by name  is: " + totalTime + "(s)");

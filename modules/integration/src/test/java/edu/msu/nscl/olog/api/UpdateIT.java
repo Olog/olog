@@ -33,7 +33,7 @@ public class UpdateIT {
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		client = OlogClientBuilder.serviceURL().withHTTPAuthentication(true)
+		client = OlogClientBuilder.serviceURL().withHTTPAuthentication(true).username("olog").password("olog")
 				.create();
 		client.set(defaultLogbook);
 		client.set(defaultTag);
@@ -90,12 +90,12 @@ public class UpdateIT {
 					.findLogsBySearch("*"+uniqueString+"*").size() == 2);
 			// add default tag testLog1 & testLog2
 			Collection<LogBuilder> logBuilders = new ArrayList<LogBuilder>();
-			logBuilders.add(log(testLog1).appendDescription(" Edited "));
-			logBuilders.add(log(testLog2).appendDescription(" Edited "));
+			logBuilders.add(log(testLog1).appendDescription(" EditedTest "));
+			logBuilders.add(log(testLog2).appendDescription(" EditedTest "));
 			Collection<Log> result = client.update(logBuilders);
 			assertTrue("failed to update a group of logs(testLog1, testLog2) " + result, result.size() == 2);
 			// check if the logs were updated
-			Collection<Log> QueryResult = client.findLogsBySearch("*Edited*");
+			Collection<Log> QueryResult = client.findLogsBySearch("*EditedTest*");
 			assertTrue("failed to update a group of logs(testLog1, testLog2) " + QueryResult, QueryResult.size() == 2);
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -320,12 +320,9 @@ public class UpdateIT {
 			property.attribute("newAtrribute", "");
 			client.update(property);
 			searchedProperty = client.getProperty(property.build().getName());
-			assertTrue(
-					"failed to set the testPropertyWithAttibutes",
-					searchedProperty.getName().equalsIgnoreCase(
-							property.build().getName())
-							&& searchedProperty.getAttributes().containsAll(
-									property.build().getAttributes()));
+			assertTrue("failed to set the testPropertyWithAttibutes",
+					searchedProperty.getName().equalsIgnoreCase(property.build().getName())
+							&& searchedProperty.getAttributes().containsAll(property.build().getAttributes()));
 
 		} catch (Exception e) {
 			// TODO: handle exception
