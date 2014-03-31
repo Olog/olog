@@ -1,7 +1,7 @@
 package edu.msu.nscl.olog.api.performance;
 
 import edu.msu.nscl.olog.api.*;
-//import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -98,7 +98,7 @@ public class OlogClientIT {
     @Test
     public void findLogByDateTest() throws IOException {
         Map<String,String> map = new HashMap<String, String>();
-      //  map.put("start", String.valueOf(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH).getTime() / 1000));
+        map.put("start", String.valueOf(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH).getTime() / 1000));
         map.put("limit", "10");
         long startTime = System.nanoTime();
         Collection<Log> logs = client.findLogs(map);
