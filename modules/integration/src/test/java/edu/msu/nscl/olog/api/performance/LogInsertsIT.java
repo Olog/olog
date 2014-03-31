@@ -1,8 +1,11 @@
-package edu.msu.nscl.olog.api;
+package edu.msu.nscl.olog.api.performance;
 
+import edu.msu.nscl.olog.api.Log;
+import edu.msu.nscl.olog.api.LogBuilder;
+import edu.msu.nscl.olog.api.OlogClient;
+import edu.msu.nscl.olog.api.OlogClientImpl;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.BufferedWriter;
@@ -42,7 +45,7 @@ public class LogInsertsIT {
         LogBuilder newLog = LogBuilder.log(log);
         newLog = newLog.id(null);
         long startTimeTotal = System.nanoTime();
-        for (int i=0 ; i<5; i++) {
+        for (int i=0 ; i<10000; i++) {
             newLog = newLog.description(log.getDescription() + i);
             long startTime = System.nanoTime();
             client.set(newLog);
@@ -53,7 +56,7 @@ public class LogInsertsIT {
         }
         long endTimeTotal = System.nanoTime();
         double totalTimeTotal =(endTimeTotal - startTimeTotal) / 1000000000.0;
-        out.write(" Time consume to insert 5 log  is: " + totalTimeTotal + "(s)");
+        out.write(" Time consume to insert 10000 log  is: " + totalTimeTotal + "(s)");
         out.newLine();
     }
 }

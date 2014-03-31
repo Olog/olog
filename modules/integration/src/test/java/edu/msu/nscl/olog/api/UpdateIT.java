@@ -318,11 +318,11 @@ public class UpdateIT {
 							&& searchedProperty.getAttributes().containsAll(
 									property.build().getAttributes()));
 			property.attribute("newAtrribute", "");
-			client.update(property);
-			searchedProperty = client.getProperty(property.build().getName());
+            client.update(property);
+			Property searchedProperty2 = client.getProperty(property.build().getName());
 			assertTrue("failed to set the testPropertyWithAttibutes",
 					searchedProperty.getName().equalsIgnoreCase(property.build().getName())
-							&& searchedProperty.getAttributes().containsAll(property.build().getAttributes()));
+							&& searchedProperty.getAttributes().containsAll(searchedProperty2.getAttributes()));
 
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -417,7 +417,6 @@ public class UpdateIT {
 	 * in the builder
 	 * 
 	 * @param returnedLogs
-	 * @param setLogs
 	 * @return
 	 */
 	private static boolean checkEqualityWithoutID(Collection<Log> returnedLogs, LogBuilder setLog) {

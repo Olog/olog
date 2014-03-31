@@ -1,5 +1,6 @@
-package edu.msu.nscl.olog.api;
+package edu.msu.nscl.olog.api.performance;
 
+import edu.msu.nscl.olog.api.*;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

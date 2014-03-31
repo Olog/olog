@@ -1,7 +1,6 @@
 package edu.msu.nscl.olog.api;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -28,7 +27,7 @@ public class RegresionIT {
     public static void prepareTest() throws Exception {
         client = OlogClientImpl.OlogClientBuilder.serviceURL().withHTTPAuthentication(true).username("olog").password("olog")
                 .create();
-        String filePath = OlogClientIT.class.getResource("RegresionIT.class").getPath();
+        String filePath = RegresionIT.class.getResource("RegresionIT.class").getPath();
         path = filePath.substring(0,filePath.indexOf("target")) + "src/test/java/edu/msu/nscl/olog/api/";
     }
 
