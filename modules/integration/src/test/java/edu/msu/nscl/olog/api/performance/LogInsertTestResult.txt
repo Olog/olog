@@ -1,0 +1,6 @@
+ Time consume to insert a log  is: 0.588603548(s)
+ Time consume to insert a log  is: 0.023384865(s)
+ Time consume to insert a log  is: 0.023498505(s)
+ Time consume to insert a log  is: 0.022176041(s)
+ Time consume to insert a log  is: 0.022445153(s)
+ Time consume to insert 5 log  is: 0.680280355(s)

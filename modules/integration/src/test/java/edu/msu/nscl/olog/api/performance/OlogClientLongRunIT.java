@@ -1,5 +1,6 @@
-package edu.msu.nscl.olog.api;
+package edu.msu.nscl.olog.api.performance;
 
+import edu.msu.nscl.olog.api.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -34,10 +35,10 @@ public class OlogClientLongRunIT {
         out.close();
     }
 
-    @Ignore
+
     @Test
     public void longTest() throws Exception {
-        for (int i=0 ; i < 30; i++) {
+        for (int i=0 ; i < 100; i++) {
             getLogByAttribute();
             getLogByAttribute();
             getLogByAttribute();
