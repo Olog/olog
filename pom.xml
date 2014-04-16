@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.msu.nscl.olog</groupId>
     <artifactId>olog</artifactId>
-    <version>2.2.6-SNAPSHOT</version>
+    <version>2.2.9-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Olog</name>
     <description>Olog is a directory server, implemented as a REST style web service.</description>
@@ -111,6 +111,10 @@
             <name>Deployment through GitHub's site deployment plugin</name>
             <url>${project.version}</url>
         </site>
+        <repository>
+            <id>bintray</id>
+            <url>https://api.bintray.com/maven/olog/Olog/olog</url>
+        </repository>
     </distributionManagement>
     <build>
         <pluginManagement>
@@ -230,6 +234,6 @@
                     </plugins>
                 </pluginManagement>
             </build>
-        </profile>
-    </profiles>
+    </profile>
+  </profiles>
 </project>
