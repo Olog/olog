@@ -5,8 +5,8 @@
     <parent>
         <groupId>edu.msu.nscl.olog</groupId>
         <artifactId>olog</artifactId>
+        <version>2.2.9-SNAPSHOT</version>
         <relativePath>../../</relativePath>
-        <version>2.2.8-SNAPSHOT</version>
     </parent>
     <artifactId>integration</artifactId>
     <packaging>jar</packaging>
@@ -15,7 +15,7 @@
         <dependency>
             <groupId>edu.msu.nscl.olog</groupId>
             <artifactId>OlogAPI</artifactId>
-            <version>2.2.8-SNAPSHOT</version>
+            <version>2.2.9-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
