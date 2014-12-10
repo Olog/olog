@@ -1,5 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
     <groupId>edu.msu.nscl.olog</groupId>
     <artifactId>olog</artifactId>
     <version>2.2.9-SNAPSHOT</version>
@@ -30,7 +35,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>8080</servlet.port>
         <github.projectName>olog</github.projectName>
-	<github.projectOwner>Olog</github.projectOwner>
+        <github.projectOwner>Olog</github.projectOwner>
         <github.global.server>github.com</github.global.server>
     </properties>
     <developers>
@@ -61,8 +66,8 @@
         <connection>scm:git:ssh://git@github.com/${github.projectOwner}/${github.projectName}.git</connection>
         <developerConnection>scm:git:[fetch=]git@github.com:${github.projectOwner}/${github.projectName}.git[push=]origin</developerConnection>
         <url>ssh://git@github.com/${github.projectOwner}/${github.projectName}.git</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
     <issueManagement>
         <system>jira</system>
         <url>http://java.net/jira/browse/OLOG</url>
@@ -234,6 +239,6 @@
                     </plugins>
                 </pluginManagement>
             </build>
-    </profile>
-  </profiles>
+        </profile>
+    </profiles>
 </project>
