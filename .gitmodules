@@ -1,9 +1,9 @@
 [submodule "modules/olog-service"]
 	path = modules/olog-service
-	url = git@github.com:Olog/olog-service.git
+	url = https://github.com/Olog/olog-service.git
 [submodule "modules/olog-java-api"]
 	path = modules/olog-java-api
-	url = git@github.com:Olog/olog-java-api.git
+	url = https://github.com/Olog/olog-java-api.git
 [submodule "modules/pyOlog"]
 	path = modules/pyOlog
-	url = git@github.com:Olog/pyOlog.git
+	url = https://github.com/Olog/pyOlog.git
